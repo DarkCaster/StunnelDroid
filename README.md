@@ -1,4 +1,7 @@
 # StunnelDroid
+
+[![Build Status](https://travis-ci.com/DarkCaster/StunnelDroid.svg?branch=master)](https://travis-ci.com/DarkCaster/StunnelDroid)
+
 Stunnel for android with user-friendly GUI
 
 This project is in an early stage of development. Do not expect usable builds anytime soon.
