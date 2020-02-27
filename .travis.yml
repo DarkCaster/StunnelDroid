@@ -1,0 +1,51 @@
+language: c
+
+os: linux
+dist: bionic
+
+before_install:
+  - sudo apt-get install -y pigz
+
+cache:
+  directories:
+    - /home/travis/.cache/stunneldroid
+
+git:
+  depth: 1
+
+env:
+  global:
+    - OPENWRT_BUILD_CACHE_DIR="/home/travis/.cache/stunneldroid"
+
+cleanup: &cleanup
+  stage: "cleanup"
+  script: ./build.sh cleanup "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
+
+stunnel: &stunnel
+  stage: "stunnel"
+  script: ./build.sh stunnel "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
+
+apk: &apk
+  stage: "apk"
+  script: ./build.sh apk "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
+  before_deploy:
+      - git config --local user.name "Travis"
+      - git config --local user.email "deploy@travis-ci.com"
+      - if [[ $TRAVIS_EVENT_TYPE = "cron" ]]; then export TRAVIS_TAG="auto"; else export TRAVIS_TAG="manual"; fi
+      - git tag "$TRAVIS_TAG" || true
+  deploy:
+    provider: releases
+    overwrite: true
+    skip_cleanup: true
+    api_key:
+#      secure: TODO
+    file_glob: true
+    file: "*.apk"
+    on:
+      all_branches: true
+
+jobs:
+  include:
+    - <<: *cleanup
+    - <<: *stunnel
+    - <<: *apk
