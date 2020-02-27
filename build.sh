@@ -36,14 +36,14 @@ stop_ping() {
 
 show_usage() {
   [[ ! -z "$1" ]] && echo "$1" && echo ""
-  echo "usage: build.sh <operation> [build_id] [event type]"
+  echo "usage: build.sh [operation] [build_id] [event type]"
   echo "see invocation examples at .travis.yml"
   exit 2
 }
 
 script_dir="$( cd "$( dirname "$0" )" && pwd )"
 
-[[ -z $operation ]] && show_usage
+[[ -z $operation ]] && operation="full_build"
 [[ -z $build_id ]] && build_id="none"
 [[ -z $event_type ]] && event_type="manual"
 
@@ -54,7 +54,7 @@ jobs_count=`nproc 2>/dev/null`
 
 echo "build config:"
 echo "operation: $operation"
-echp "build_id: $build_id"
+echo "build_id: $build_id"
 echo "event_type: $event_type"
 echo
 
@@ -71,7 +71,7 @@ scripts_dir="$script_dir/external/scripts"
 configs_dir="$script_dir/external/configs"
 
 cache_dir="$HOME/.cache/stunneldroid"
-if [[ ! -z STUNNEL_DROID_BUILD_CACHE_DIR ]]; then
+if [[ ! -z $STUNNEL_DROID_BUILD_CACHE_DIR ]]; then
   cache_dir="$STUNNEL_DROID_BUILD_CACHE_DIR"
 fi
 
@@ -108,7 +108,7 @@ create_pack() {
   rm -f "$cache_stage/$pack_z"
   echo "creating archive"
   pushd "$src_parent" 1>/dev/null
-  tar cf - --exclude="$src_name/build.sh" --exclude="$src_name/.travis.yml" "$src_name" | pigz -3 - > "$cache_stage/$pack_z"
+  tar cf - --exclude="$src_name/.git" --exclude="$src_name/build.sh" --exclude="$src_name/.travis.yml" "$src_name" | pigz -3 - > "$cache_stage/$pack_z"
   popd 1>/dev/null
   echo -n "pack size: "
   stat -c %s "$cache_stage/$pack_z"
@@ -132,7 +132,7 @@ restore_pack() {
   pushd "$script_dir" 1>/dev/null
   for target in * .*
   do
-    [[ $target = "." || $target = ".." || $target = "build.sh" || $target = ".travis.yml" ]] && continue || true
+    [[ $target = "." || $target = ".." || $target = ".git" || $target = "build.sh" || $target = ".travis.yml" ]] && continue || true
     echo "removing $target"
     rm -rf "$target"
   done
@@ -146,9 +146,29 @@ restore_pack() {
   touch "$cache_stage/$pack_z"
 }
 
+prepare() {
+  #TODO:
+  #clean_env
+  true
+}
+
+
 if [[ $operation = "cleanup" ]]; then
   clean_cache
+elif [[ $operation = "stunnel" ]]; then
+  run_ping
+  prepare
+  create_pack
+elif [[ $operation = "apk" ]]; then
+  run_ping
+  restore_pack "stunnel"
+  prepare
+  create_pack
 else
   echo "operation $operation is not supported"
   exit 1
 fi
+
+stop_ping
+
+exit 0
