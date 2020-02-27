@@ -67,9 +67,6 @@ if [[ -z $commit_hash || -z $commit_hash_short ]]; then
   commit_hash_short="unknown"
 fi
 
-scripts_dir="$script_dir/external/scripts"
-configs_dir="$script_dir/external/configs"
-
 cache_dir="$HOME/.cache/stunneldroid"
 if [[ ! -z $STUNNEL_DROID_BUILD_CACHE_DIR ]]; then
   cache_dir="$STUNNEL_DROID_BUILD_CACHE_DIR"
@@ -152,23 +149,32 @@ prepare() {
   true
 }
 
+download() {
+  "$script_dir/stunnel/download.sh"
+  "$script_dir/tools/download.sh"
+}
 
 if [[ $operation = "cleanup" ]]; then
   clean_cache
 elif [[ $operation = "stunnel" ]]; then
   run_ping
   prepare
+  download
   create_pack
+  stop_ping
 elif [[ $operation = "apk" ]]; then
   run_ping
   restore_pack "stunnel"
   prepare
   create_pack
+  stop_ping
+elif [[ $operation = "full_build" ]]; then
+  prepare
+  download
 else
   echo "operation $operation is not supported"
   exit 1
 fi
 
-stop_ping
 
 exit 0
