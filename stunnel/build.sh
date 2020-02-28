@@ -102,7 +102,7 @@ gunzip -c "$script_dir/$stunnel_filename" | tar xf -
 pushd 1>/dev/null openssl-*
 ./Configure --prefix="$dist" --openssldir=/data/local/tmp/ssl no-tests no-shared android-$arch -D__ANDROID_API__=$api_ver
 make
-make install
+make install_sw
 popd 1>/dev/null
 
 #build stunnel
