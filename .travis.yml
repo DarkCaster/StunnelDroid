@@ -29,18 +29,21 @@ apk: &apk
   stage: "apk"
   script: ./build.sh apk "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
   before_deploy:
-      - git config --local user.name "Travis"
-      - git config --local user.email "deploy@travis-ci.com"
-      - if [[ $TRAVIS_EVENT_TYPE = "cron" ]]; then export TRAVIS_TAG="auto"; else export TRAVIS_TAG="manual"; fi
-      - git tag "$TRAVIS_TAG" || true
+    - git config --local user.name "Travis"
+    - git config --local user.email "deploy@travis-ci.com"
+    - if [[ $TRAVIS_EVENT_TYPE = "cron" ]]; then export TRAVIS_TAG="auto"; else export TRAVIS_TAG="manual"; fi
+    - git tag "$TRAVIS_TAG" || true
   deploy:
     provider: releases
     overwrite: true
     skip_cleanup: true
     api_key:
-#      secure: TODO
+      secure: izK+OFHf1PZfcm4KTLaAzouP4F9fNknvNUJ31Q1WaGhJ22/QfT7d4Nluz8w2HqJiYtxRcHpi41mutdOGhkyilj4k02cUKvI+RLhXjKWpK/b51D9i3qQd3zka1V7nKQcppM63PcDeNHXd87oZ/X0oBJ28a5D54nXvTRzC6S1Fz2vmAkIfHOFf5Pgr6fyRpOD+AwEXGzzddVspKWeeBejbbuY+KrpZ8iow7ZNK5k/alANdfyu08IE67JT389XZ1j2BPDfWpFJPpiJ4+PccqTOpeByGVuK4GIXE/MCRZgPckDmJCHRWGuHJ1BeO2VziY0v+5Jc3Zue9uEv8uUFTEYh6kSIgkBId2y1vk3Fk7LXRUl2Y/LrVH3LMSQFhiWc7W/RMVCseQgIDZu12he57gnyrFDwv5LxaFgEwBd2+cQUZ0OOHS7OOcnJcAoNcugQJUCir+Ejwo0LJewWvjd5xioU01Lxy5OIzsp49PzNc+ccK2pnW9RzDKq2dj9zqcxSIfI0R0s2Pube6IRBqYRuweMWbtHPvvbN6CuYxQn/etz9J4kiaAQuQVL/NMo9xSMxZymVhDq2QJANu3jH8b6nrFQl59MVRQSYBq7vx+M7if17tHNdT8Bu9bDKbxKdfgbjKJLWvJlWNEOHD+6OgRN4OpkmWHZuTxtmasV6+5/UIsEefNnM=
     file_glob: true
-    file: "*.apk"
+    file:
+      - "*.tar.xz"
+      - "*.apk"
+      - "*.info.txt"
     on:
       all_branches: true
 

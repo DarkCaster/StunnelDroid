@@ -176,11 +176,9 @@ build_stunnel() {
 }
 
 package_build_logs() {
-  local suffix="$1"
-  [[ -z $suffix ]] && suffix="none"
   pushd "$script_dir" 1>/dev/null
-  tar cf "build-logs-$suffix.tar" *.log
-  xz -9e "build-logs-$suffix.tar"
+  tar cf "build-logs.tar" *.log
+  xz -9e "build-logs.tar"
   popd 1>/dev/null
 }
 
@@ -204,10 +202,12 @@ elif [[ $operation = "apk" ]]; then
   restore_pack "stunnel"
   prepare
   #TODO: build android project
-  date=`date +"%Y-%m-%d"`
-  suffix="${date}-${commit_hash_short}"
-  package_build_logs "$suffix"
   #TODO: build apk
+  package_build_logs
+  date=`date +"%Y-%m-%d"`
+  echo "short commit hash: $commit_hash_short" > build.info.txt
+  echo " long commit hash: $commit_hash" >> build.info.txt
+  echo "       build date: $date" >> build.info.txt
   stop_ping
 elif [[ $operation = "dev" ]]; then
   download_stunnel
@@ -218,10 +218,13 @@ elif [[ $operation = "full_build" ]]; then
   download_stunnel
   download_android
   build_stunnel
-  #TODO: build build android project
-  date=`date +"%Y-%m-%d"`
-  suffix="${date}-${commit_hash_short}"
+  #TODO: build android project
   #TODO: build apk
+  package_build_logs
+  date=`date +"%Y-%m-%d"`
+  echo "short commit hash: $commit_hash_short" > build.info.txt
+  echo " long commit hash: $commit_hash" >> build.info.txt
+  echo "       build date: $date" >> build.info.txt
 else
   echo "operation $operation is not supported"
   exit 1
