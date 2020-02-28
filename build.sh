@@ -68,8 +68,8 @@ if [[ -z $commit_hash || -z $commit_hash_short ]]; then
 fi
 
 cache_dir="$HOME/.cache/stunneldroid"
-if [[ ! -z $STUNNEL_DROID_BUILD_CACHE_DIR ]]; then
-  cache_dir="$STUNNEL_DROID_BUILD_CACHE_DIR"
+if [[ ! -z $STUNNELDROID_BUILD_CACHE_DIR ]]; then
+  cache_dir="$STUNNELDROID_BUILD_CACHE_DIR"
 fi
 
 echo "using cache directory at $cache_dir"

@@ -15,7 +15,7 @@ git:
 
 env:
   global:
-    - OPENWRT_BUILD_CACHE_DIR="/home/travis/.cache/stunneldroid"
+    - STUNNELDROID_BUILD_CACHE_DIR="/home/travis/.cache/stunneldroid"
 
 download: &download
   stage: "download"
