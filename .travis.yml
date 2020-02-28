@@ -17,9 +17,9 @@ env:
   global:
     - OPENWRT_BUILD_CACHE_DIR="/home/travis/.cache/stunneldroid"
 
-cleanup: &cleanup
-  stage: "cleanup"
-  script: ./build.sh cleanup "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
+download: &download
+  stage: "download"
+  script: ./build.sh download "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
 
 stunnel: &stunnel
   stage: "stunnel"
@@ -46,6 +46,6 @@ apk: &apk
 
 jobs:
   include:
-    - <<: *cleanup
+    - <<: *download
     - <<: *stunnel
     - <<: *apk

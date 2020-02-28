@@ -146,20 +146,21 @@ restore_pack() {
 prepare() {
   #TODO:
   #clean_env
-  true
+  . "$script_dir/tools/prepare-env.sh.in"
 }
 
 download() {
   "$script_dir/stunnel/download.sh"
-  "$script_dir/tools/download.sh"
+  "$script_dir/tools/prepare.sh"
 }
 
-if [[ $operation = "cleanup" ]]; then
+if [[ $operation = "download" ]]; then
   clean_cache
+  prepare
+  download
 elif [[ $operation = "stunnel" ]]; then
   run_ping
   prepare
-  download
   create_pack
   stop_ping
 elif [[ $operation = "apk" ]]; then
@@ -171,6 +172,7 @@ elif [[ $operation = "apk" ]]; then
 elif [[ $operation = "full_build" ]]; then
   prepare
   download
+  
 else
   echo "operation $operation is not supported"
   exit 1
