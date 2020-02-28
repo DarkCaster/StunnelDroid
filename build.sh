@@ -43,7 +43,7 @@ show_usage() {
 
 script_dir="$( cd "$( dirname "$0" )" && pwd )"
 
-[[ -z $operation ]] && operation="full_build"
+[[ -z $operation ]] && operation="dev"
 [[ -z $build_id ]] && build_id="none"
 [[ -z $event_type ]] && event_type="manual"
 
@@ -152,8 +152,11 @@ prepare() {
   . "$prepare_script_dir/prepare-env.sh.in"
 }
 
-download() {
+download_stunnel() {
   "$script_dir/stunnel/download.sh"
+}
+
+download_android() {
   "$script_dir/tools/prepare.sh"
 }
 
@@ -161,15 +164,15 @@ build_stunnel() {
   echo ""
   echo "*** building stunnel for armv7 arch ***"
   "$script_dir/stunnel/build.sh" 28 arm "$ANDROID_NDK_PATH"
-  #echo ""
-  #echo "*** building stunnel for arm64 arch ***"
-  #"$script_dir/stunnel/build.sh" 28 arm64 "$ANDROID_NDK_PATH"
-  #echo ""
-  #echo "*** building stunnel for x86 arch ***"
-  #"$script_dir/stunnel/build.sh" 28 x86 "$ANDROID_NDK_PATH"
-  #echo ""
-  #echo "*** building stunnel for x86_64 arch ***"
-  #"$script_dir/stunnel/build.sh" 28 x86_64 "$ANDROID_NDK_PATH"
+  echo ""
+  echo "*** building stunnel for arm64 arch ***"
+  "$script_dir/stunnel/build.sh" 28 arm64 "$ANDROID_NDK_PATH"
+  echo ""
+  echo "*** building stunnel for x86 arch ***"
+  "$script_dir/stunnel/build.sh" 28 x86 "$ANDROID_NDK_PATH"
+  echo ""
+  echo "*** building stunnel for x86_64 arch ***"
+  "$script_dir/stunnel/build.sh" 28 x86_64 "$ANDROID_NDK_PATH"
 }
 
 package_build_logs() {
@@ -185,7 +188,8 @@ if [[ $operation = "download" ]]; then
   run_ping
   clean_cache
   prepare
-  download 1>"$script_dir/download.log" 2>&1 || ( echo "download failed! last 200 lines of download.log:" && tail -n 200 "$script_dir/download.log" && exit 1 )
+  download_stunnel 1>"$script_dir/download-stunnel.log" 2>&1 || ( echo "download-stunnel failed! last 200 lines of download-stunnel.log:" && tail -n 200 "$script_dir/download-stunnel.log" && exit 1 )
+  download_android 1>"$script_dir/download-android.log" 2>&1 || ( echo "download-android failed! last 200 lines of download-android.log:" && tail -n 200 "$script_dir/download-android.log" && exit 1 )
   create_pack
   stop_ping
 elif [[ $operation = "stunnel" ]]; then
@@ -199,14 +203,25 @@ elif [[ $operation = "apk" ]]; then
   run_ping
   restore_pack "stunnel"
   prepare
+  #TODO: build android project
   date=`date +"%Y-%m-%d"`
   suffix="${date}-${commit_hash_short}"
   package_build_logs "$suffix"
+  #TODO: build apk
   stop_ping
+elif [[ $operation = "dev" ]]; then
+  download_stunnel
+  ANDROID_NDK_PATH=""
+  build_stunnel
 elif [[ $operation = "full_build" ]]; then
   prepare
-  download
+  download_stunnel
+  download_android
   build_stunnel
+  #TODO: build build android project
+  date=`date +"%Y-%m-%d"`
+  suffix="${date}-${commit_hash_short}"
+  #TODO: build apk
 else
   echo "operation $operation is not supported"
   exit 1
