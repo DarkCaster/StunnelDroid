@@ -4,7 +4,7 @@ os: linux
 dist: bionic
 
 before_install:
-  - sudo apt-get install -y pigz
+  - sudo apt-get install -y pigz p7zip-full
 
 cache:
   directories:
