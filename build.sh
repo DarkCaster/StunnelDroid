@@ -171,6 +171,15 @@ build_stunnel() {
   "$script_dir/stunnel/build.sh" 28 x86_64 "$ANDROID_NDK_PATH"
 }
 
+package_build_logs() {
+  local suffix="$1"
+  [[ -z $suffix ]] && suffix="none"
+  pushd "$script_dir" 1>/dev/null
+  tar cf "build-logs-$suffix.tar" *.log
+  xz -9e "build-logs-$suffix.tar"
+  popd 1>/dev/null
+}
+
 if [[ $operation = "download" ]]; then
   run_ping
   clean_cache
@@ -189,6 +198,9 @@ elif [[ $operation = "apk" ]]; then
   run_ping
   restore_pack "stunnel"
   prepare
+  date=`date +"%Y-%m-%d"`
+  suffix="${date}-${commit_hash_short}"
+  package_build_logs "$suffix"
   stop_ping
 elif [[ $operation = "full_build" ]]; then
   prepare
