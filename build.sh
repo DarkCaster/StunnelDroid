@@ -157,9 +157,17 @@ download() {
 }
 
 build_stunnel() {
+  echo ""
+  echo "*** building stunnel for armv7 arch ***"
   "$script_dir/stunnel/build.sh" 28 arm "$ANDROID_NDK_PATH"
+  echo ""
+  echo "*** building stunnel for arm64 arch ***"
   "$script_dir/stunnel/build.sh" 28 arm64 "$ANDROID_NDK_PATH"
+  echo ""
+  echo "*** building stunnel for x86 arch ***"
   "$script_dir/stunnel/build.sh" 28 x86 "$ANDROID_NDK_PATH"
+  echo ""
+  echo "*** building stunnel for x86_64 arch ***"
   "$script_dir/stunnel/build.sh" 28 x86_64 "$ANDROID_NDK_PATH"
 }
 
