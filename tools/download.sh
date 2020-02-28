@@ -8,7 +8,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 
 #base url
 tools_base_url="https://dl.google.com/android/repository"
-jdk_base_url="https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL"
+jdk_base_url="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u242-b08"
 
 #get filename from checksum files
 tools_checksum="tools.checksum"
