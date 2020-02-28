@@ -173,7 +173,7 @@ elif [[ $operation = "stunnel" ]]; then
   run_ping
   restore_pack "download"
   prepare
-  build_stunnel 1>"$script_dir/build.log" 2>&1 || ( echo "build failed! last 200 lines of build.log:" && tail -n 200 "$script_dir/build.log" && exit 1 )
+  build_stunnel 1>"$script_dir/stunnel.log" 2>&1 || ( echo "build failed! last 200 lines of stunnel.log:" && tail -n 200 "$script_dir/stunnel.log" && exit 1 )
   create_pack
   stop_ping
 elif [[ $operation = "apk" ]]; then
