@@ -4,7 +4,7 @@
 #not for direct execution
 #included by other build scripts
 
-prepare_script_dir="$( cd "$( dirname "$0" )" && pwd )"
+[[ -z $prepare_script_dir ]] && prepare_script_dir="$( cd "$( dirname "$0" )" && pwd )"
 sdk_dir="$prepare_script_dir/android"
 
 if [[ -z $env_prepare_done ]]; then
