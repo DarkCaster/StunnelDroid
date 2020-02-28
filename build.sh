@@ -146,12 +146,20 @@ restore_pack() {
 prepare() {
   #TODO:
   #clean_env
-  . "$script_dir/tools/prepare-env.sh.in"
+  prepare_script_dir="$script_dir/tools"
+  . "$prepare_script_dir/prepare-env.sh.in"
 }
 
 download() {
   "$script_dir/stunnel/download.sh"
   "$script_dir/tools/prepare.sh"
+}
+
+build_stunnel() {
+  "$script_dir/stunnel/build.sh" 28 arm "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 arm64 "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 x86 "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 x86_64 "$ANDROID_NDK_PATH"
 }
 
 if [[ $operation = "download" ]]; then
@@ -161,6 +169,7 @@ if [[ $operation = "download" ]]; then
 elif [[ $operation = "stunnel" ]]; then
   run_ping
   prepare
+  build_stunnel 1>"$script_dir/build.log" 2>&1 || ( echo "build failed! last 1000 lines of build.log:" && tail -n 1000 "$script_dir/build.log" && exit 1 ) 
   create_pack
   stop_ping
 elif [[ $operation = "apk" ]]; then
@@ -172,7 +181,7 @@ elif [[ $operation = "apk" ]]; then
 elif [[ $operation = "full_build" ]]; then
   prepare
   download
-  
+  build_stunnel
 else
   echo "operation $operation is not supported"
   exit 1
