@@ -165,11 +165,11 @@ build_stunnel() {
 if [[ $operation = "download" ]]; then
   clean_cache
   prepare
-  download
+  download 1>"$script_dir/download.log" 2>&1 || ( echo "download failed! last 200 lines of download.log:" && tail -n 200 "$script_dir/download.log" && exit 1 )
 elif [[ $operation = "stunnel" ]]; then
   run_ping
   prepare
-  build_stunnel 1>"$script_dir/build.log" 2>&1 || ( echo "build failed! last 1000 lines of build.log:" && tail -n 1000 "$script_dir/build.log" && exit 1 ) 
+  build_stunnel 1>"$script_dir/build.log" 2>&1 || ( echo "build failed! last 200 lines of build.log:" && tail -n 200 "$script_dir/build.log" && exit 1 )
   create_pack
   stop_ping
 elif [[ $operation = "apk" ]]; then
