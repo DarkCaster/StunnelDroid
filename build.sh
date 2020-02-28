@@ -79,9 +79,6 @@ build_hash=`echo "${commit_hash}${build_id}${event_type}" | sha256sum -t - | cut
 cache_stage="$cache_dir/stage_${build_hash}"
 cache_status="$cache_dir/status_${build_hash}"
 
-mkdir -pv "$cache_stage"
-mkdir -pv "$cache_status"
-
 on_error() {
   echo "build failed! (line $1)"
   trap - ERR
@@ -93,6 +90,8 @@ trap 'on_error $LINENO' ERR
 
 clean_cache() {
   echo "cleaning up cache"
+  mkdir -pv "$cache_stage"
+  mkdir -pv "$cache_status"
   rm -rfv "$cache_dir"/*
   touch "$cache_dir/clear"
 }
@@ -101,6 +100,8 @@ create_pack() {
   local pack_z="$operation.tar.gz"
   local src_parent=`dirname "$script_dir"`
   local src_name=`basename "$script_dir"`
+  mkdir -pv "$cache_stage"
+  mkdir -pv "$cache_status"
   echo "creating pack: $cache_stage/$pack_z"
   rm -f "$cache_stage/$pack_z"
   echo "creating archive"
