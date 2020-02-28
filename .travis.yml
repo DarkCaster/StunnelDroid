@@ -33,6 +33,6 @@ jobs:
         file_glob: true
         file:
           - "*.tar.xz"
-          - "*.info.txt"
+          - "build.info.txt"
         on:
           all_branches: true

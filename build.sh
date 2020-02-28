@@ -145,11 +145,12 @@ restore_pack() {
 }
 
 prepare() {
-  #TODO:
-  #clean_env
-  export
+  . "$script_dir/clean-env.sh.in"
   prepare_script_dir="$script_dir/tools"
   . "$prepare_script_dir/prepare-env.sh.in"
+  echo ""
+  echo "*** build environment after performing cleanup"
+  export
 }
 
 download_stunnel() {
@@ -205,9 +206,9 @@ elif [[ $operation = "apk" ]]; then
   #TODO: build apk
   package_build_logs
   date=`date +"%Y-%m-%d"`
-  echo "short commit hash: $commit_hash_short" > build.info.txt
-  echo " long commit hash: $commit_hash" >> build.info.txt
-  echo "       build date: $date" >> build.info.txt
+  echo "short commit hash: $commit_hash_short" > "$script_dir/build.info.txt"
+  echo " long commit hash: $commit_hash" >> "$script_dir/build.info.txt"
+  echo "       build date: $date" >> "$script_dir/build.info.txt"
   stop_ping
 elif [[ $operation = "dev" ]]; then
   download_stunnel
@@ -222,9 +223,9 @@ elif [[ $operation = "full_build" ]]; then
   #TODO: build apk
   package_build_logs
   date=`date +"%Y-%m-%d"`
-  echo "short commit hash: $commit_hash_short" > build.info.txt
-  echo " long commit hash: $commit_hash" >> build.info.txt
-  echo "       build date: $date" >> build.info.txt
+  echo "short commit hash: $commit_hash_short" > "$script_dir/build.info.txt"
+  echo " long commit hash: $commit_hash" >> "$script_dir/build.info.txt"
+  echo "       build date: $date" >> "$script_dir/build.info.txt"
 else
   echo "operation $operation is not supported"
   exit 1
