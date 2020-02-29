@@ -146,8 +146,7 @@ restore_pack() {
 
 prepare() {
   . "$script_dir/clean-env.sh.in"
-  prepare_script_dir="$script_dir/tools"
-  . "$prepare_script_dir/prepare-env.sh.in"
+  . "$script_dir/tools/prepare-env.sh.in" "$script_dir/tools"
   echo ""
   echo "*** build environment after performing cleanup"
   export
@@ -164,16 +163,16 @@ download_android() {
 build_stunnel() {
   echo ""
   echo "*** building stunnel for armv7 arch ***"
-  "$script_dir/stunnel/build.sh" 28 arm "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 arm "$ndk_bundle_dir" "$ndk_sbs_dir"
   echo ""
   echo "*** building stunnel for arm64 arch ***"
-  "$script_dir/stunnel/build.sh" 28 arm64 "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 arm64 "$ndk_bundle_dir" "$ndk_sbs_dir"
   echo ""
   echo "*** building stunnel for x86 arch ***"
-  "$script_dir/stunnel/build.sh" 28 x86 "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 x86 "$ndk_bundle_dir" "$ndk_sbs_dir"
   echo ""
   echo "*** building stunnel for x86_64 arch ***"
-  "$script_dir/stunnel/build.sh" 28 x86_64 "$ANDROID_NDK_PATH"
+  "$script_dir/stunnel/build.sh" 28 x86_64 "$ndk_bundle_dir" "$ndk_sbs_dir"
 }
 
 package_build_logs() {

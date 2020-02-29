@@ -5,7 +5,7 @@ set -e
 
 #script base directory
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-. "$script_dir/prepare-env.sh.in"
+. "$script_dir/prepare-env.sh.in" "$script_dir"
 tools_dir="$ANDROID_HOME"
 
 rm -rf "$tools_dir"
