@@ -161,18 +161,28 @@ download_android() {
 }
 
 build_stunnel() {
+  local assets_basedir="$script_dir/project/app/src/main/assets"
+  mkdir -p "$assets_basedir"
+
   echo ""
   echo "*** building stunnel for armv7 arch ***"
   "$script_dir/stunnel/build.sh" 28 arm "$ndk_bundle_dir" "$ndk_sbs_dir"
+  cp "$script_dir/stunnel/build-arm/dist/bin/stunnel" "$assets_basedir/stunnel-arm"
+
   echo ""
   echo "*** building stunnel for arm64 arch ***"
   "$script_dir/stunnel/build.sh" 28 arm64 "$ndk_bundle_dir" "$ndk_sbs_dir"
+  cp "$script_dir/stunnel/build-arm64/dist/bin/stunnel" "$assets_basedir/stunnel-arm64"
+
   echo ""
   echo "*** building stunnel for x86 arch ***"
   "$script_dir/stunnel/build.sh" 28 x86 "$ndk_bundle_dir" "$ndk_sbs_dir"
+  cp "$script_dir/stunnel/build-x86/dist/bin/stunnel" "$assets_basedir/stunnel-x86"
+
   echo ""
   echo "*** building stunnel for x86_64 arch ***"
   "$script_dir/stunnel/build.sh" 28 x86_64 "$ndk_bundle_dir" "$ndk_sbs_dir"
+  cp "$script_dir/stunnel/build-x86_64/dist/bin/stunnel" "$assets_basedir/stunnel-x86_64"
 }
 
 package_build_logs() {
