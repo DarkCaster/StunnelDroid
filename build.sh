@@ -185,6 +185,14 @@ build_stunnel() {
   cp "$script_dir/stunnel/build-x86_64/dist/bin/stunnel" "$assets_basedir/stunnel-x86_64"
 }
 
+build_apk() {
+  echo ""
+  echo "*** building android project ***"
+  pushd 1>/dev/null "$script_dir/project"
+  ./gradlew assemble
+  popd 1>/dev/null
+}
+
 package_build_logs() {
   pushd "$script_dir" 1>/dev/null
   tar cf "build-logs.tar" *.log
@@ -211,8 +219,8 @@ elif [[ $operation = "apk" ]]; then
   run_ping
   restore_pack "stunnel"
   prepare
-  #TODO: build android project
-  #TODO: build apk
+  build_apk 1>"$script_dir/project.log" 2>&1 || ( echo "build failed! last 200 lines of project.log:" && tail -n 200 "$script_dir/project.log" && exit 1 )
+  #TODO: sign apk
   package_build_logs
   date=`date +"%Y-%m-%d"`
   echo "short commit hash: $commit_hash_short" > "$script_dir/build.info.txt"
@@ -228,8 +236,8 @@ elif [[ $operation = "full_build" ]]; then
   download_stunnel
   download_android
   build_stunnel
-  #TODO: build android project
-  #TODO: build apk
+  build_apk
+  #TODO: sign apk
   package_build_logs
   date=`date +"%Y-%m-%d"`
   echo "short commit hash: $commit_hash_short" > "$script_dir/build.info.txt"
