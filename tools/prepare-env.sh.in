@@ -28,16 +28,16 @@ if [[ -z $keys_prepare_done ]]; then
   add_gradle_property() {
     local pr_name="$1"
     local pr_value="$2"
-    if grep -q -e "^${pr_name}\t*=" "$GRADLE_USER_HOME/gradle.properties" then
-      grep -v -e "^${pr_name}\t*=" > "$GRADLE_USER_HOME/gradle.properties.new"
+    if grep -q -e "^${pr_name}\t*=" "$GRADLE_USER_HOME/gradle.properties"; then
+      grep -v -e "^${pr_name}\t*=" "$GRADLE_USER_HOME/gradle.properties" > "$GRADLE_USER_HOME/gradle.properties.new"
       mv "$GRADLE_USER_HOME/gradle.properties.new" "$GRADLE_USER_HOME/gradle.properties"
     fi
-    echo "$pr_name=$pr_value" >> "$GRADLE_USER_HOME/gradle.properties"
+    echo "${pr_name}=${pr_value}" >> "$GRADLE_USER_HOME/gradle.properties"
   }
-  add_gradle_property "$ANDROID_KEY_STORE" "$KEYSTORE_DIR/keystore"
-  add_gradle_property "$ANDROID_KEY_STORE_PASSWORD" "$KEYSTORE_DIR/password_keystore"
-  add_gradle_property "$ANDROID_KEY_PASSWORD" "$KEYSTORE_DIR/password_key"
-  add_gradle_property "$ANDROID_KEY_ALIAS" "apk_sign_key"
+  add_gradle_property "ANDROID_KEY_STORE" "$KEYSTORE_DIR/keystore"
+  add_gradle_property "ANDROID_KEY_STORE_PASSWORD" "$KEYSTORE_DIR/password_keystore"
+  add_gradle_property "ANDROID_KEY_PASSWORD" "$KEYSTORE_DIR/password_key"
+  add_gradle_property "ANDROID_KEY_ALIAS" "apk_sign_key"
   unset -f add_gradle_property
   keys_prepare_done="yes"
 fi
