@@ -26,6 +26,9 @@ mv jdk* jdk
 
 7z x "$script_dir/$tools_filename"
 yes | sdkmanager --licenses
+
+#install only NDK package - needed for building stunnel
+#when building android project with gradle, it will download all needed missing packages
 sdkmanager --install ndk-bundle
 
 popd 1>/dev/null
