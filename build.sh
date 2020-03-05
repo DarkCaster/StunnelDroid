@@ -78,11 +78,13 @@ build_hash=`echo "${commit_hash}${build_id}${event_type}" | sha256sum -t - | cut
 
 cache_stage="$cache_dir/stage_${build_hash}"
 cache_status="$cache_dir/status_${build_hash}"
+keys_dir="$script_dir/tools/keys"
 
 on_error() {
   echo "build failed! (line $1)"
   trap - ERR
   stop_ping
+  rm -rf "$keys_dir"
   exit 1
 }
 
@@ -147,10 +149,10 @@ restore_pack() {
 prepare() {
   . "$script_dir/clean-env.sh.in"
   . "$script_dir/tools/prepare-env.sh.in" "$script_dir/tools"
-  if [[ $TRAVIS_SECURE_ENV_VARS != false ]]; then
-    echo "*** not showing build environment, because travis-ci has defined encrypted variable(s)"
+  echo ""
+  if [[ $TRAVIS_SECURE_ENV_VARS != false ]] || [[ ! -z $ARCHIVE_SECURE_KEY ]]; then
+    echo "*** not showing build environment, because it contains protected variables"
   else
-    echo ""
     echo "*** build environment after performing cleanup"
     export
   fi
@@ -189,6 +191,20 @@ build_stunnel() {
   cp "$script_dir/stunnel/build-x86_64/dist/bin/stunnel" "$assets_basedir/stunnel-x86_64"
 }
 
+extract_keys() {
+  if [[ ! -z $ARCHIVE_SECURE_KEY ]] && then
+    echo "*** extracting keys for package signing"
+    "$script_dir/tools/extract-archive.sh" "$script_dir/tools/keys.enc" "$script_dir/tools"
+  else
+    echo "*** skipping package signing keys extraction"
+  fi
+}
+
+remove_keys() {
+  echo "*** removing keys for package signing"
+  rm -rf "$keys_dir"
+}
+
 build_apk() {
   echo ""
   echo "*** building android project ***"
@@ -224,7 +240,9 @@ elif [[ $operation = "apk" ]]; then
   run_ping
   restore_pack "stunnel"
   prepare
+  extract_keys
   build_apk 1>"$script_dir/project.log" 2>&1 || ( echo "build failed! last 200 lines of project.log:" && tail -n 200 "$script_dir/project.log" && exit 1 )
+  remove_keys
   package_build_logs
   date=`date +"%Y-%m-%d"`
   echo "short commit hash: $commit_hash_short" > "$script_dir/build.info.txt"
@@ -240,7 +258,9 @@ elif [[ $operation = "full_build" ]]; then
   download_stunnel
   download_android
   build_stunnel
+  extract_keys
   build_apk
+  remove_keys
   date=`date +"%Y-%m-%d"`
   echo "short commit hash: $commit_hash_short" > "$script_dir/build.info.txt"
   echo " long commit hash: $commit_hash" >> "$script_dir/build.info.txt"
