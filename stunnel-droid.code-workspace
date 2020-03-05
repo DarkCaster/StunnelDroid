@@ -5,8 +5,10 @@
 	"settings": {
 		"files.exclude": {
 			"project": true,
-			"tools/*/*": true,
-			"stunnel/*/*": true,
+			"tools/android": true,
+			"tools/gradle": true,
+			"tools/keys": true,
+			"stunnel/build-*": true,
 		}
 	}
 }
