@@ -191,6 +191,7 @@ build_apk() {
   pushd 1>/dev/null "$script_dir/project"
   ./gradlew assembleRelease
   popd 1>/dev/null
+  mv "$script_dir/project/app/build/outputs/apk/release"/*.apk .
 }
 
 package_build_logs() {
