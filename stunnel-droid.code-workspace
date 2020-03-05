@@ -5,6 +5,8 @@
 	"settings": {
 		"files.exclude": {
 			"project": true,
+			"tools/*/*": true,
+			"stunnel/*/*": true,
 		}
 	}
 }
