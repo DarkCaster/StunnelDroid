@@ -147,9 +147,13 @@ restore_pack() {
 prepare() {
   . "$script_dir/clean-env.sh.in"
   . "$script_dir/tools/prepare-env.sh.in" "$script_dir/tools"
-  echo ""
-  echo "*** build environment after performing cleanup"
-  export
+  if [[ $TRAVIS_SECURE_ENV_VARS != false ]]; then
+    echo "*** not showing build environment, because travis-ci has defined encrypted variable(s)"
+  else
+    echo ""
+    echo "*** build environment after performing cleanup"
+    export
+  fi
 }
 
 download_stunnel() {
