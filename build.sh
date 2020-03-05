@@ -189,7 +189,7 @@ build_apk() {
   echo ""
   echo "*** building android project ***"
   pushd 1>/dev/null "$script_dir/project"
-  ./gradlew assemble
+  ./gradlew assembleRelease
   popd 1>/dev/null
 }
 

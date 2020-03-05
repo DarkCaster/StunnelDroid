@@ -35,9 +35,9 @@ if [[ -z $keys_prepare_done ]]; then
     echo "${pr_name}=${pr_value}" >> "$GRADLE_USER_HOME/gradle.properties"
   }
   add_gradle_property "ANDROID_KEY_STORE" "$KEYSTORE_DIR/keystore"
-  add_gradle_property "ANDROID_KEY_STORE_PASSWORD" "$KEYSTORE_DIR/password_keystore"
-  add_gradle_property "ANDROID_KEY_PASSWORD" "$KEYSTORE_DIR/password_key"
+  add_gradle_property "ANDROID_KEY_STORE_PASSWORD_FILE" "$KEYSTORE_DIR/password_keystore"
   add_gradle_property "ANDROID_KEY_ALIAS" "apk_sign_key"
+  add_gradle_property "ANDROID_KEY_PASSWORD_FILE" "$KEYSTORE_DIR/password_key"
   unset -f add_gradle_property
   keys_prepare_done="yes"
 fi
