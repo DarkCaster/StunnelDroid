@@ -18,6 +18,8 @@ jobs:
     - stage: stunnel
       script: ./build.sh stunnel "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
     - stage: apk
+      env:
+        - secure: ZCmv91nUdPC35SlgAD2L4kEUfkEVwq3OtyaRA0KaGY2c3goxUDSrYiDkiLdfZlmMv7iqKvJ0FVSi7SzmsgBaeSH60Zy0PTF77ATGTH2ORIzRmsqh8pbaagXxQLcvS5Eq9UnxHKurAfPGDwSZ41ESaSnk4hZiXZuIDcrciZWWpuAECXbCR29AcltlkxnEhOG2QQ6MA+3GbalwIyTlGqDGEMdMoo/pA9KgMPeXHNeSV/Y98k2+/fBG/KQeNyJ5FkKKCF0TIXmYbCq0tz4ussttETyzqVqLTyDbadjMyAkhn9AjlglRDmAD0GPh9/WJgOWssnzpMUChEr7zGSBPxRxyGkmYi+2szEe/By4SL4y+DrMOU0FoYaMl7+9kHkvuX5jlgklCNjcW2+eq3PhSPfGlm/Llyz7O/LAQqLiHr8S3tbITZ8kXNJTxALXFmFBigwSQW+9A7lYanMGFWQ54OCm0uyNGg6dmxl18SVn8VC7gXeoLk1+gZFS20I1q9wRWba6p49YicZ8u1qYpAOnxk4G9SaVQIv/6dpFQUY2d28PDxqrVx46T7rSsE00sXlxGaCZZ72O62dXgIOR10hn1e/XfWqdEjtoqBPKUs711WKXwD4yFv5M69eaonarHc72rO1IEUsMyo1W1G/QLHQQLyLJIzemu6kL6RIrIafcTlr4Puvw=
       script: ./build.sh apk "$TRAVIS_BUILD_ID" "$TRAVIS_EVENT_TYPE"
       before_deploy:
         - git config --local user.name "Travis"
