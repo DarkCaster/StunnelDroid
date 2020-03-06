@@ -192,7 +192,7 @@ build_stunnel() {
 }
 
 extract_keys() {
-  if [[ ! -z $ARCHIVE_SECURE_KEY ]] && then
+  if [[ ! -z $ARCHIVE_SECURE_KEY ]]; then
     echo "*** extracting keys for package signing"
     "$script_dir/tools/extract-archive.sh" "$script_dir/tools/keys.enc" "$script_dir/tools"
   else
