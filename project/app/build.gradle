@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 android {
@@ -11,15 +13,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        release {
-        }
-    }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 }
@@ -36,15 +33,67 @@ def SetSignConfig() {
     if (project.hasProperty("ANDROID_KEY_STORE") && project.hasProperty("ANDROID_KEY_STORE_PASSWORD_FILE") &&
         project.hasProperty("ANDROID_KEY_ALIAS") && project.hasProperty("ANDROID_KEY_PASSWORD_FILE")) {
         logger.quiet('Trying to use signing configuration from user-provided gradle.properties file')
-        project.android.signingConfigs.release {
+        project.android.customSigningConfig {
             storeFile file(ANDROID_KEY_STORE)
             storePassword file(ANDROID_KEY_STORE_PASSWORD_FILE).text.trim()
             keyAlias ANDROID_KEY_ALIAS
             keyPassword file(ANDROID_KEY_PASSWORD_FILE).text.trim()
         }
+        project.android.buildTypes.release.signingConfig = project.android.customSigningConfig
     }
-    else
+    else {
         logger.quiet('Custom signing configuration is not found')
+    }
 }
 
+def SetVersion() {
+    //current date
+    def date=new Date()
+
+    //version code
+    def cdf=new SimpleDateFormat("yyMMddHHmm")
+    cdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+    def code=cdf.format(date).toInteger()
+
+    //try to get short commit hash from git
+    def hash=""
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine "git", "log", "-1", "--pretty=format:%h"
+            standardOutput = stdout
+        }
+        stdout.toString().readLines().each{line->hash=line}
+        if(hash.isEmpty())
+            hash="none"
+    }
+    catch (ignored) { }
+
+    //try to get git tag for versionName, use the last one
+    def name=""
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine "git", "tag", "--points-at", "HEAD"
+            standardOutput = stdout
+        }
+        stdout.toString().readLines().each{line->name=line}
+        if(!name.isEmpty())
+            name="${name}.${hash}"
+    }
+    catch (ignored) { }
+
+    //if no tags was found, use date
+    if(name == "") {
+        def ndf=new SimpleDateFormat("yyyy.MM.dd.HHmm")
+        ndf.setTimeZone(TimeZone.getTimeZone("UTC"))
+        name="${ndf.format(date)}.${hash}"
+    }
+
+    project.android.defaultConfig.versionCode=code
+    project.android.defaultConfig.versionName=name
+    logger.quiet("Package version: versionCode=${code}; versionName=${name}")
+}
+
+SetVersion()
 SetSignConfig()
