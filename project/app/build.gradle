@@ -13,10 +13,15 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release {
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -33,16 +38,16 @@ def SetSignConfig() {
     if (project.hasProperty("ANDROID_KEY_STORE") && project.hasProperty("ANDROID_KEY_STORE_PASSWORD_FILE") &&
         project.hasProperty("ANDROID_KEY_ALIAS") && project.hasProperty("ANDROID_KEY_PASSWORD_FILE")) {
         logger.quiet('Trying to use signing configuration from user-provided gradle.properties file')
-        project.android.customSigningConfig {
+        project.android.signingConfigs.release {
             storeFile file(ANDROID_KEY_STORE)
             storePassword file(ANDROID_KEY_STORE_PASSWORD_FILE).text.trim()
             keyAlias ANDROID_KEY_ALIAS
             keyPassword file(ANDROID_KEY_PASSWORD_FILE).text.trim()
         }
-        project.android.buildTypes.release.signingConfig = project.android.customSigningConfig
     }
     else {
         logger.quiet('Custom signing configuration is not found')
+        project.android.buildTypes.release.signingConfig = null
     }
 }
 
